@@ -16,10 +16,10 @@ import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
 public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
 
-    public enum SendCPCLTaskErrors
+    public enum SendLinePrintTaskErrors
     {
         NO_PRINTER,
-        EMPTY_CPCL_STRING,
+        EMPTY_LINEPRINT_STRING,
         PRINTER_PAUSED,
         HEAD_OPEN,
         PAPER_OUT,
@@ -30,9 +30,9 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
         ERROR_CPCL_PRINTER
     }
 
-    public interface SendCPCLTaskCallback
+    public interface SendLinePrintTaskCallback
     {
-        void onError(SendCPCLTaskErrors error, String message);
+        void onError(SendLinePrintTaskErrors error, String message);
         void onSuccess();
     }
 
@@ -40,9 +40,9 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
     private static final String TAG = "SEND_LINEPRINT_TASK";
     private DiscoveredPrinter printer;
     private String lineprintString;
-    private SendCPCLTaskCallback callback = null;
+    private SendLinePrintTaskCallback callback = null;
 
-    public SendLinePrintTask(String lineprintString, DiscoveredPrinter printer, SendCPCLTaskCallback callback) {
+    public SendLinePrintTask(String lineprintString, DiscoveredPrinter printer, SendLinePrintTaskCallback callback) {
         this.printer = printer;
         this.lineprintString = lineprintString;
         this.callback = callback;
@@ -61,7 +61,7 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
         {
             if(callback != null)
             {
-                callback.onError(SendCPCLTaskErrors.EMPTY_CPCL_STRING, "Empty lineprint string");
+                callback.onError(SendLinePrintTaskErrors.EMPTY_LINEPRINT_STRING, "Empty lineprint string");
             }
             return;
         }
@@ -84,7 +84,7 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
             {
                 if(callback != null)
                 {
-                    callback.onError(SendCPCLTaskErrors.NO_PRINTER, "No printer found");
+                    callback.onError(SendLinePrintTaskErrors.NO_PRINTER, "No printer found");
                 }
                 return;
             }
@@ -96,7 +96,7 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
                 if (printerStatus.isPaused) {
                     if(callback != null)
                     {
-                        callback.onError(SendCPCLTaskErrors.PRINTER_PAUSED, "Printer is paused");
+                        callback.onError(SendLinePrintTaskErrors.PRINTER_PAUSED, "Printer is paused");
                     }
                     return;
                     }
@@ -104,14 +104,14 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
                 {
                     if(callback != null)
                     {
-                        callback.onError(SendCPCLTaskErrors.HEAD_OPEN, "Printer's head is open");
+                        callback.onError(SendLinePrintTaskErrors.HEAD_OPEN, "Printer's head is open");
                     }
                     return;
                 } else if (printerStatus.isPaperOut)
                 {
                     if(callback != null)
                     {
-                        callback.onError(SendCPCLTaskErrors.PAPER_OUT, "Paper is out");
+                        callback.onError(SendLinePrintTaskErrors.PAPER_OUT, "Paper is out");
                     }
                     return;
                 }
@@ -119,7 +119,7 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
                 {
                     if(callback != null)
                     {
-                        callback.onError(SendCPCLTaskErrors.UNKNOWN_PRINTER_STATUS, "Unknown printer status");
+                        callback.onError(SendLinePrintTaskErrors.UNKNOWN_PRINTER_STATUS, "Unknown printer status");
                     }
                     return;
                 }
@@ -129,7 +129,7 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
             if (pl != PrinterLanguage.LINE_PRINT) {
                 if(callback != null)
                 {
-                    callback.onError(pl == PrinterLanguage.ZPL ? SendLinePrintTask.SendCPCLTaskErrors.ERROR_ZPL_PRINTER : SendLinePrintTask.SendCPCLTaskErrors.ERROR_CPCL_PRINTER, "Can't send lineprint content to a " + (pl == PrinterLanguage.ZPL ? "ZPL" : "CPCL") + " printer.");
+                    callback.onError(pl == PrinterLanguage.ZPL ? SendLinePrintTask.SendLinePrintTaskErrors.ERROR_ZPL_PRINTER : SendLinePrintTask.SendLinePrintTaskErrors.ERROR_CPCL_PRINTER, "Can't send lineprint content to a " + (pl == PrinterLanguage.ZPL ? "ZPL" : "CPCL") + " printer.");
                 }
                 return;
             }
@@ -140,13 +140,13 @@ public class SendLinePrintTask extends AsyncTask<Void, Boolean, Boolean> {
             e.printStackTrace();
             if(callback != null)
             {
-                callback.onError(SendCPCLTaskErrors.CONNECTION_ERROR, e.getLocalizedMessage());
+                callback.onError(SendLinePrintTaskErrors.CONNECTION_ERROR, e.getLocalizedMessage());
             }
         } catch (ZebraPrinterLanguageUnknownException e) {
             e.printStackTrace();
             if(callback != null)
             {
-                callback.onError(SendCPCLTaskErrors.PRINTER_LANGUAGE_UNKNOWN, e.getLocalizedMessage());
+                callback.onError(SendLinePrintTaskErrors.PRINTER_LANGUAGE_UNKNOWN, e.getLocalizedMessage());
             }
         } finally {
             try {
