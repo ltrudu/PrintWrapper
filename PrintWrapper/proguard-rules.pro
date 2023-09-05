@@ -19,3 +19,16 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#-renamesourcefileattribute SourceFile
+#noinspection ShrinkerUnresolvedReference
+-keepclassmembers class **.ZPLHelper {
+    native <methods>;
+    #noinspection ShrinkerUnresolvedReference,ShrinkerUnresolvedReference
+    String createBitmapZPL(Bitmap);
+}
+
+# Parceler library
+-keep interface org.parceler.Parcel
+-keep @org.parceler.Parcel class * { *; }
+-keep class **$$Parcelable { *; }

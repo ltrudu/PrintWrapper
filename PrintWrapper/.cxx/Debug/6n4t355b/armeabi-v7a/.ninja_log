@@ -1,0 +1,5 @@
+# ninja log v5
+26	443	715611973	CMakeFiles/ZebraUtils.dir/CPCHelper.cpp.o	39b048a82fc8fd4f
+1	453	715611973	CMakeFiles/ZebraUtils.dir/jni.cpp.o	8a6761041ffc087c
+13	458	715611973	CMakeFiles/ZebraUtils.dir/ZPLHelper.cpp.o	d2788a6566b8d3ec
+458	722	715611973	D:/Dev/LTGithub/PrintWrapper/PrintWrapper/build/intermediates/cxx/Debug/6n4t355b/obj/armeabi-v7a/libZebraUtils.so	91f5861c81366844

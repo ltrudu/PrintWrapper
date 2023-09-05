@@ -64,11 +64,14 @@ public class PrinterDiscoveryDataMapKeys {
 
     // Bluetooth printer Keys
     public static final String FRIENDLY_NAME   = "FRIENDLY_NAME";
-    public static final String MAC_ADDRESS  = "MAC_ADDRESS";
+    public static final String MAC_ADDRESS   = "MAC_ADDRESS";
 
     // Additional info
     public static final String PDF_ENABLED  = "PDF_ENABLED";
     public static final String CONNEXION_TYPE = "CONNEXION_TYPE";
     public static final String CONNEXION_TYPE_BLUETOOTH = "CONNEXION_TYPE_BLUETOOTH";
     public static final String CONNEXION_TYPE_NETWORK = "CONNEXION_TYPE_NETWORK";
+    public static final String CONNEXION_TYPE_USB = "CONNEXION_TYPE_USB";
+    public static final String DEVICE_LANGUAGE = "DEVICE_LANGUAGE";
+
 }

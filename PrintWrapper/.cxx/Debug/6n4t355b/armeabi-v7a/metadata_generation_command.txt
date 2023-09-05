@@ -1,0 +1,24 @@
+                    Executable : C:\Android\android-sdk\cmake\3.10.2.4988404\bin\cmake.exe
+arguments : 
+-HD:\Dev\LTGithub\PrintWrapper\PrintWrapper\src\main\cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=24
+-DANDROID_PLATFORM=android-24
+-DANDROID_ABI=armeabi-v7a
+-DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
+-DANDROID_NDK=C:\Android\android-sdk\ndk\21.0.6113669
+-DCMAKE_ANDROID_NDK=C:\Android\android-sdk\ndk\21.0.6113669
+-DCMAKE_TOOLCHAIN_FILE=C:\Android\android-sdk\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=C:\Android\android-sdk\cmake\3.10.2.4988404\bin\ninja.exe
+-DCMAKE_CXX_FLAGS=-std=c++14
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\Dev\LTGithub\PrintWrapper\PrintWrapper\build\intermediates\cxx\Debug\6n4t355b\obj\armeabi-v7a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=D:\Dev\LTGithub\PrintWrapper\PrintWrapper\build\intermediates\cxx\Debug\6n4t355b\obj\armeabi-v7a
+-DCMAKE_BUILD_TYPE=Debug
+-BD:\Dev\LTGithub\PrintWrapper\PrintWrapper\.cxx\Debug\6n4t355b\armeabi-v7a
+-GNinja
+jvmArgs : 
+
+
+                    Build command args: []
+                    Version: 2

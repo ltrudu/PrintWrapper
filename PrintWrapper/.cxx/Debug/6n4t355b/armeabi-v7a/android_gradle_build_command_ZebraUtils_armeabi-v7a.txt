@@ -1,0 +1,7 @@
+Executable : C:\Android\android-sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+D:\Dev\LTGithub\PrintWrapper\PrintWrapper\.cxx\Debug\6n4t355b\armeabi-v7a
+ZebraUtils
+jvmArgs : 
+

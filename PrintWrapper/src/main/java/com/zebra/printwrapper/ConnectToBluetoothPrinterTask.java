@@ -5,7 +5,9 @@ import android.os.AsyncTask;
 
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
-public class ConnectToBluetoothPrinterTask extends AsyncTask<Void, Boolean, Boolean> {
+import java.util.Map;
+
+public class ConnectToBluetoothPrinterTask extends AsyncTask<Void, Boolean, Map<String, String>> {
 
     private static final String TAG = "CONNECT_BT_TASK";
 
@@ -25,17 +27,17 @@ public class ConnectToBluetoothPrinterTask extends AsyncTask<Void, Boolean, Bool
     }
 
     @Override
-    protected Boolean doInBackground(Void... params) {
+    protected Map<String,String> doInBackground(Void... params) {
         return PrinterDiscoveryDataMapHelper.populateBluetoothPrinterDiscoveryMap(selectedPrinter, callback, context);
     }
 
     @Override
-    protected void onPostExecute(Boolean populateBluetoothDiscoDataSuccessful) {
-        super.onPostExecute(populateBluetoothDiscoDataSuccessful);
+    protected void onPostExecute(Map<String,String> discoveryMap) {
+        super.onPostExecute(discoveryMap);
 
-        if (populateBluetoothDiscoDataSuccessful) {
+        if (discoveryMap.size()>0) {
             if(callback != null)
-                callback.onSuccess(selectedPrinter);
+                callback.onSuccess(selectedPrinter, discoveryMap);
         } else {
             // TODO: return resetConnectingStatus
             if(callback != null)

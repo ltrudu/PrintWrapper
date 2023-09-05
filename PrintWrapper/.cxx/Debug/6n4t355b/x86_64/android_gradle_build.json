@@ -1,0 +1,40 @@
+{
+  "stringTable": {},
+  "buildFiles": [
+    "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Android\\android-sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+      "-C",
+      "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\.cxx\\Debug\\6n4t355b\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Android\\android-sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+    "-C",
+    "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\.cxx\\Debug\\6n4t355b\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "ZebraUtils-Debug-x86_64": {
+      "buildCommandComponents": [
+        "C:\\Android\\android-sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\.cxx\\Debug\\6n4t355b\\x86_64",
+        "ZebraUtils"
+      ],
+      "buildType": "debug",
+      "abi": "x86_64",
+      "artifactName": "ZebraUtils",
+      "output": "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\build\\intermediates\\cxx\\Debug\\6n4t355b\\obj\\x86_64\\libZebraUtils.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {},
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

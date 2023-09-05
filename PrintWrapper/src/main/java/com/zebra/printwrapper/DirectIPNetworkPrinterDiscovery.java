@@ -76,7 +76,7 @@ public class DirectIPNetworkPrinterDiscovery {
             }
         };
 
-        // Init Bluetooth Discovery
+        // Init DirectedBroadcast Discovery
         try {
             Log.i(TAG, "Searching for printers...");
             if(waitForResponsesTimeout == -1)

@@ -29,7 +29,7 @@ public class LocalNetworkPrinterDiscovery {
     public void startDiscovery()
     {
         discoveredPrinters = new ArrayList<>();
-        // Init Bluetooth Discovery
+        // Init localBroadcast Discovery
         try {
             Log.i(TAG, "Searching for printers...");
             NetworkDiscoverer.localBroadcast(new DiscoveryHandler() {

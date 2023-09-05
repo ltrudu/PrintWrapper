@@ -1,0 +1,2 @@
+ninja: Entering directory `D:\Dev\LTGithub\PrintWrapper\PrintWrapper\.cxx\Debug\6n4t355b\armeabi-v7a'
+ninja: no work to do.

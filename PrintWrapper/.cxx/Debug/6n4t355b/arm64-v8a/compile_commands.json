@@ -1,0 +1,19 @@
+[
+{
+  "directory": "D:/Dev/LTGithub/PrintWrapper/PrintWrapper/.cxx/Debug/6n4t355b/arm64-v8a",
+  "command": "C:\\Android\\android-sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android24 --gcc-toolchain=C:/Android/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Android/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DANDROID -DZebraUtils_EXPORTS -ID:/Dev/LTGithub/PrintWrapper/PrintWrapper/src/main/cpp/src/main/cpp  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\ZebraUtils.dir\\jni.cpp.o -c D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\jni.cpp",
+  "file": "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\jni.cpp"
+},
+
+{
+  "directory": "D:/Dev/LTGithub/PrintWrapper/PrintWrapper/.cxx/Debug/6n4t355b/arm64-v8a",
+  "command": "C:\\Android\\android-sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android24 --gcc-toolchain=C:/Android/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Android/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DANDROID -DZebraUtils_EXPORTS -ID:/Dev/LTGithub/PrintWrapper/PrintWrapper/src/main/cpp/src/main/cpp  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\ZebraUtils.dir\\ZPLHelper.cpp.o -c D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\ZPLHelper.cpp",
+  "file": "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\ZPLHelper.cpp"
+},
+
+{
+  "directory": "D:/Dev/LTGithub/PrintWrapper/PrintWrapper/.cxx/Debug/6n4t355b/arm64-v8a",
+  "command": "C:\\Android\\android-sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android24 --gcc-toolchain=C:/Android/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Android/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DANDROID -DZebraUtils_EXPORTS -ID:/Dev/LTGithub/PrintWrapper/PrintWrapper/src/main/cpp/src/main/cpp  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\ZebraUtils.dir\\CPCHelper.cpp.o -c D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\CPCHelper.cpp",
+  "file": "D:\\Dev\\LTGithub\\PrintWrapper\\PrintWrapper\\src\\main\\cpp\\CPCHelper.cpp"
+}
+]

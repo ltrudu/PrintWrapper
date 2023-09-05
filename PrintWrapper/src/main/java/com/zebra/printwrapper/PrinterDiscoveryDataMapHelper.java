@@ -20,7 +20,7 @@ public class PrinterDiscoveryDataMapHelper {
 
     private static final String TAG = "BTHelper";
 
-    public static boolean populateBluetoothPrinterDiscoveryMap(final DiscoveredPrinter selectedPrinter, final SelectedPrinterTaskCallbacks callback, final Context context)
+    public static Map<String,String> populateBluetoothPrinterDiscoveryMap(final DiscoveredPrinter selectedPrinter, final SelectedPrinterTaskCallbacks callback, final Context context)
     {
         class BluetoothConnectionQuickClose extends BluetoothConnection {
 
@@ -48,56 +48,44 @@ public class PrinterDiscoveryDataMapHelper {
             }
         }
 
-        boolean result = false;
-
+        Map<String, String> discoveryMap = null;
+        Connection connection = null;
         try {
-            Connection connection = new BluetoothConnectionQuickClose(selectedPrinter.address);
+            connection = new BluetoothConnectionQuickClose(selectedPrinter.address);
             connection.open();
-            try {
-                ZebraPrinter zebraPrinter = ZebraPrinterFactory.getInstance(connection);
-                boolean isPdfPrinter = SGDHelper.isPDFEnabled(connection);
-                if (!isPdfPrinter) {
-                    String errorMessage = context.getString(R.string.wrong_firmware);
-                    if(callback != null)
-                        callback.onError(SelectedPrinterTaskError.WRONG_FIRMWARE, errorMessage);
-                    connection.close();
-                    return false;
-                }
-            }catch (ZebraPrinterLanguageUnknownException e)
+
+            if(connection.isConnected()) {
+                // Add some information that are not reported by the bluetooth discoverer
+                discoveryMap = selectedPrinter.getDiscoveryDataMap();
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.LINK_OS_MAJOR_VER, SGD.GET("appl.link_os_version", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.PRODUCT_NAME, SGD.GET("device.product_name", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.SYSTEM_NAME, SGD.GET("bluetooth.friendly_name", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.HARDWARE_ADDRESS, SGD.GET("bluetooth.address", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.FIRMWARE_VER, SGD.GET("appl.name", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.SERIAL_NUMBER, SGD.GET("device.unique_id", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.APL_MODE, SGD.GET("apl.enable", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.DEVICE_LANGUAGE, SGD.GET("device.languages", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.PDF_ENABLED, discoveryMap.get(PrinterDiscoveryDataMapKeys.APL_MODE).equalsIgnoreCase("pdf") ? "true" : "false");
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.CONNEXION_TYPE, PrinterDiscoveryDataMapKeys.CONNEXION_TYPE_BLUETOOTH);
+            }
+            else
             {
-                if(callback != null)
-                    callback.onError(SelectedPrinterTaskError.OPEN_CONNECTION_ERROR, context.getString(R.string.open_connection_error));
-                Log.e(TAG, context.getString(R.string.open_connection_error), e);
-            };
-
-            // Add some information that are not reported by the bluetooth discoverer
-            Map<String, String> discoveryMap = selectedPrinter.getDiscoveryDataMap();
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.LINK_OS_MAJOR_VER, SGD.GET("appl.link_os_version", connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.PRODUCT_NAME, SGD.GET("device.product_name", connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.SYSTEM_NAME, SGD.GET("bluetooth.friendly_name", connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.HARDWARE_ADDRESS, SGD.GET("bluetooth.address", connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.FIRMWARE_VER, SGD.GET("appl.name", connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.SERIAL_NUMBER, SGD.GET("device.unique_id", connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.APL_MODE, SGDHelper.getAplMode(connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.PDF_ENABLED, discoveryMap.get(PrinterDiscoveryDataMapKeys.APL_MODE).equalsIgnoreCase("pdf") ? "true" : "false");
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.CONNEXION_TYPE, PrinterDiscoveryDataMapKeys.CONNEXION_TYPE_BLUETOOTH);
-
-            result = true;
+                discoveryMap = null;
+            }
 
             connection.close();
-
         } catch (ConnectionException e) {
             Log.e(TAG, "Open connection error", e);
             if(callback != null)
                 callback.onError(SelectedPrinterTaskError.OPEN_CONNECTION_ERROR, R.string.open_connection_error + ":" + e.getLocalizedMessage());
-            result = false;
+            discoveryMap = null;
         }
 
-        return result;
+        return discoveryMap;
 
     }
 
-    public static boolean populateNetworkPrinterDiscoveryMap(final DiscoveredPrinter selectedPrinter, final SelectedPrinterTaskCallbacks callback, final Context context)
+    public static Map<String,String> populateNetworkPrinterDiscoveryMap(final DiscoveredPrinter selectedPrinter, final SelectedPrinterTaskCallbacks callback, final Context context)
     {
         class MultiChannelQuickClose extends MultichannelTcpConnection {
 
@@ -113,47 +101,31 @@ public class PrinterDiscoveryDataMapHelper {
                  }
             }
         }
-
-
-        boolean result = false;
-        Connection connection = new MultichannelTcpConnection(selectedPrinter);
+        Map<String, String> discoveryMap;
+        Connection connection = new MultiChannelQuickClose(selectedPrinter);
         try {
-            Map<String, String> discoveryDataMap = selectedPrinter.getDiscoveryDataMap();
             connection.open();
-            boolean isPdfPrinter = SGDHelper.isPDFEnabled(connection);
 
-            try {
-                ZebraPrinter zebraPrinter = ZebraPrinterFactory.getInstance(connection);
-                if (!isPdfPrinter) {
-                    String errorMessage = context.getString(R.string.wrong_firmware);
-                    if(callback != null)
-                        callback.onError(SelectedPrinterTaskError.WRONG_FIRMWARE, errorMessage);
-                    connection.close();
-                    return false;
-                }
-            }catch (ZebraPrinterLanguageUnknownException e)
+            if(connection.isConnected())
             {
-                if(callback != null)
-                    callback.onError(SelectedPrinterTaskError.OPEN_CONNECTION_ERROR, context.getString(R.string.open_connection_error));
-                Log.e(TAG, context.getString(R.string.open_connection_error), e);
-            };
-
-            Map<String, String> discoveryMap = selectedPrinter.getDiscoveryDataMap();
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.APL_MODE, SGDHelper.getAplMode(connection));
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.PDF_ENABLED, isPdfPrinter ? "true" : "false");
-            discoveryMap.put(PrinterDiscoveryDataMapKeys.CONNEXION_TYPE, PrinterDiscoveryDataMapKeys.CONNEXION_TYPE_NETWORK);
-            result = true;
-
+                discoveryMap = selectedPrinter.getDiscoveryDataMap();
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.DEVICE_LANGUAGE, SGD.GET("device.languages", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.APL_MODE, SGDHelper.getAplMode(connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.PDF_ENABLED, discoveryMap.get(PrinterDiscoveryDataMapKeys.APL_MODE).equalsIgnoreCase("pdf") ? "true" : "false");
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.CONNEXION_TYPE, PrinterDiscoveryDataMapKeys.CONNEXION_TYPE_NETWORK);
+            }
+            else
+                discoveryMap = null;
             connection.close();
 
         } catch (ConnectionException e) {
             Log.e(TAG, "Open connection error", e);
             if(callback != null)
                 callback.onError(SelectedPrinterTaskError.OPEN_CONNECTION_ERROR, R.string.open_connection_error + ":" + e.getLocalizedMessage());
-            result = false;
+            discoveryMap = null;
         }
 
-        return result;
+        return discoveryMap;
 
     }
 
