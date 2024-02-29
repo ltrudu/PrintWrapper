@@ -1,13 +1,12 @@
 package com.zebra.printwrapper;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
 import java.util.Map;
 
-public class ConnectToBluetoothPrinterTask extends ExecutorTask<Void, Boolean, Map<String, String>> {
+public class GetBluetoothPrinterInfoTask extends ExecutorTask<Void, Boolean, Map<String, String>> {
 
     private static final String TAG = "CONNECT_BT_TASK";
 
@@ -15,7 +14,7 @@ public class ConnectToBluetoothPrinterTask extends ExecutorTask<Void, Boolean, M
     private SelectedPrinterTaskCallbacks callback;
     private DiscoveredPrinter selectedPrinter = null;
 
-    public ConnectToBluetoothPrinterTask(DiscoveredPrinter selectedPrinter, SelectedPrinterTaskCallbacks aCallback, Context aContext) {
+    public GetBluetoothPrinterInfoTask(DiscoveredPrinter selectedPrinter, SelectedPrinterTaskCallbacks aCallback, Context aContext) {
         this.context = aContext;
         this.callback = aCallback;
         this.selectedPrinter = selectedPrinter;
