@@ -19,7 +19,7 @@ import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
 import java.io.IOException;
 
-public class SendImageTask extends AsyncTask<Void, Boolean, Boolean> {
+public class SendImageTask extends ExecutorTask<Void, Boolean, Boolean> {
 
     public enum SendImageTaskErrors
     {

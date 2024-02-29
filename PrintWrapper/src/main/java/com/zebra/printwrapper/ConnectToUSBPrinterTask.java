@@ -7,7 +7,7 @@ import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
 import java.util.Map;
 
-public class ConnectToUSBPrinterTask extends AsyncTask<Void, Boolean, Map<String, String>> {
+public class ConnectToUSBPrinterTask extends ExecutorTask<Void, Boolean, Map<String, String>> {
 
     private static final String TAG = "CONNECT_USB_TASK";
 

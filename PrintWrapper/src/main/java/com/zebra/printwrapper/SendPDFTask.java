@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
+public class SendPDFTask extends ExecutorTask<Void, Boolean, Boolean> {
 
     public enum SendPDFTaskErrors
     {

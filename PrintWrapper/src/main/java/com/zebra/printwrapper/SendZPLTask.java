@@ -16,7 +16,7 @@ import com.zebra.sdk.printer.ZebraPrinterFactory;
 import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
-public class SendZPLTask extends AsyncTask<Void, Boolean, Boolean> {
+public class SendZPLTask extends ExecutorTask<Void, Boolean, Boolean> {
 
     public enum SendZPLTaskErrors
     {

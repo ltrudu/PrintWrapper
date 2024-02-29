@@ -13,7 +13,7 @@ import com.zebra.sdk.printer.ZebraPrinterFactory;
 import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
-public class SendDirectTask extends AsyncTask<Void, Boolean, Boolean> {
+public class SendDirectTask extends ExecutorTask<Void, Boolean, Boolean> {
 
     public enum SendDirectTaskErrors
     {

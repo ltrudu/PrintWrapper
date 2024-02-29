@@ -7,7 +7,7 @@ import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
 import java.util.Map;
 
-public class ConnectToBluetoothPrinterTask extends AsyncTask<Void, Boolean, Map<String, String>> {
+public class ConnectToBluetoothPrinterTask extends ExecutorTask<Void, Boolean, Map<String, String>> {
 
     private static final String TAG = "CONNECT_BT_TASK";
 
