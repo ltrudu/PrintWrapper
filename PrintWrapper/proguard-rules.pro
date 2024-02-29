@@ -22,10 +22,14 @@
 
 #-renamesourcefileattribute SourceFile
 #noinspection ShrinkerUnresolvedReference
--keepclassmembers class **.ZPLHelper {
+-keepclassmembers class **.RasterizationHelper {
     native <methods>;
+    #noinspection ShrinkerUnresolvedReference
+    String getUtilsVersion();
     #noinspection ShrinkerUnresolvedReference,ShrinkerUnresolvedReference
     String createBitmapZPL(Bitmap);
+    #noinspection ShrinkerUnresolvedReference,ShrinkerUnresolvedReference
+    String createBitmapCPC(Bitmap);
 }
 
 # Parceler library

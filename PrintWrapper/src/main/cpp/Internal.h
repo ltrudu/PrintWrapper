@@ -26,14 +26,14 @@ extern JavaVM* g_JVM;
 #define LOGE(...)						__android_log_print(ANDROID_LOG_ERROR, LOG_TAG,__VA_ARGS__)
 #define LOGI(...)						__android_log_print(ANDROID_LOG_INFO, LOG_TAG,__VA_ARGS__)
 #define SIZE(s)							(sizeof(s) / sizeof(s[0]))
-#define ZPLHELPER_CLASS				    "com/zebra/zebraprintservice/service/ZebraPrintService"
+#define ZPLHELPER_CLASS				    "com/zebra/printwrapper/RasterizationHelper"
 #define LOG_TAG                         "Zebra-Utils"
 #define RED(a)                          (((((a >> 11) & 0x1F) * 527) + 23) >> 6)
 #define GREEN(a)                        (((((a >> 5) & 0x3F) * 259) + 33) >> 6)
 #define BLUE(a)                         ((((a & 0x1F) * 527) + 23) >> 6)
 #define AT(x,y)                         ((iWidth * (y)) + (x))
 
-//ZPLHelper.cpp
+//RasterizationHelper.cpp
 bool ZPLconvertImage(AndroidBitmapInfo *info, void *pixels,  char **out);
 
 //CPCHelper.cpp

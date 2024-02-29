@@ -274,7 +274,9 @@ public class SGDHelper {
     }
 
     public static Map<String, String> MULTI_GET(String propertyNamesCommaSeparated, DiscoveredPrinter discoveredPrinter, SGDHelperCallback callback) throws PrinterWrapperException {
+        Log.d(TAG, "propertyNamesCommaSeparated:" + propertyNamesCommaSeparated);
         List<String> propertiesList = getListFromCommaSeparatedValues(propertyNamesCommaSeparated, mUseBase64Encoding);
+        Log.d(TAG, "List size:" + propertiesList.size());
         return MULTI_GET(propertiesList, discoveredPrinter, callback);
     }
 
@@ -282,6 +284,9 @@ public class SGDHelper {
         if (callback != null) {
             callback.onMessage("Initiating connection with printer.");
         }
+
+        Log.d(TAG, "Multiget properties: " + propertyNames.toString());
+
         Connection connection = connectToPrinter(discoveredPrinter, callback);
         if (connection == null) {
             throw new PrinterWrapperException(new Exception("Connexion error: connection object is null"), null);
@@ -350,6 +355,7 @@ public class SGDHelper {
                 throw new PrinterWrapperException(e);
             }
         }
+        Log.d(TAG, "getPropertyResponses: " + getPropertyResponses.toString());
         return getPropertyResponses;
     }
 
@@ -555,6 +561,13 @@ public class SGDHelper {
             }
             try {
                 doSettingResponse = SGD.DO(setting, value, connection);
+                if(setting.equalsIgnoreCase("device.reset") && doSettingResponse.length() == 0)
+                {
+                    if (callback != null) {
+                        callback.onMessage("DO command succeeded.");
+                    }
+                    break;
+                }
                 if (doSettingResponse.length() > 0) {
                     if (callback != null) {
                         callback.onMessage("DO command returned: " + doSettingResponse);

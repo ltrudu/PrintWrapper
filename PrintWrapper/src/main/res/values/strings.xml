@@ -9,6 +9,7 @@
     <string name="searching_for_printers">Searching for printers&#8230;</string>
     <string name="wrong_firmware">Printer is not set up as a PDF Virtual Device</string>
     <string name="open_connection_error">"Open connection error"</string>
+    <string name="Usb_discovery_error">"USB Discovery error"</string>
     <string name="close_connection_error">"Close connection error"</string>
     <string name="reset_connection_status">"Reset Connection"</string>
     <string name="could_not_disconnect_device">"Could not disconnect device"</string>

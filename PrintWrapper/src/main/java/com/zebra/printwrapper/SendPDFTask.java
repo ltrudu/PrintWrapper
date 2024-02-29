@@ -7,8 +7,8 @@ import android.graphics.pdf.PdfRenderer;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
@@ -20,6 +20,7 @@ import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 import com.zebra.sdk.comm.TcpConnection;
 import com.zebra.sdk.device.ProgressMonitor;
+import com.zebra.sdk.printer.PrinterLanguage;
 import com.zebra.sdk.printer.PrinterStatus;
 import com.zebra.sdk.printer.SGD;
 import com.zebra.sdk.printer.ZebraPrinter;
@@ -44,7 +45,9 @@ public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
         CONNECTION_ERROR,
         PRINTER_LANGUAGE_UNKNOWN,
 
-        FILE_NOT_FOUND_ERROR
+        FILE_NOT_FOUND_ERROR,
+
+        CONFIGURATION_ERROR
     }
 
     public interface SendPDFTaskCallback
@@ -72,6 +75,8 @@ public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
     private int mJpegQuality = 75;
     private Context context = null;
 
+    private static boolean pdfBoxInitialized = false;
+
     /**
      *
      * @param filePath
@@ -79,27 +84,21 @@ public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
      * @param scaleFactorX ScaleFactor on X axis in percentage (0-100)
      * @param scaleFactorY ScaleFactor on Y axis in percentage (0-100)
      */
-    public SendPDFTask(Context context, String filePath, DiscoveredPrinter printer, int nbCopies, int scaleFactorX, int scaleFactorY, SendPDFTaskCallback callback) {
+    public SendPDFTask(Context context, String filePath, DiscoveredPrinter printer, int nbCopies, int scaleFactorX, int scaleFactorY, boolean variableLengthMode, int nVariableLengthTopMargin, SendPDFTaskCallback callback) {
         this.printer = printer;
         this.filePath = filePath;
         this.scaleFactorX = scaleFactorX;
         this.scaleFactorY = scaleFactorY;
         this.callback = callback;
         this.context = context;
-        this.bVariableLength = false;
-        this.nbCopies = nbCopies;
-    }
-
-    public SendPDFTask(Context context,String filePath, DiscoveredPrinter printer, boolean continuousMode, int nVariableLengthTopMargin, int nbCopies, SendPDFTaskCallback callback) {
-        this.printer = printer;
-        this.filePath = filePath;
-        this.scaleFactorX = -1;
-        this.scaleFactorY = -1;
-        this.callback = callback;
-        this.context = context;
-        this.bVariableLength = continuousMode;
+        this.bVariableLength = variableLengthMode;
         this.nVariableLengthTopMargin = nVariableLengthTopMargin;
         this.nbCopies = nbCopies;
+        if(pdfBoxInitialized == false)
+        {
+            PDFBoxResourceLoader.init(context.getApplicationContext());
+            pdfBoxInitialized = true;
+        }
     }
 
     @Override
@@ -191,7 +190,9 @@ public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
                 if(callback != null)
                 {
                     callback.onError(SendPDFTaskErrors.FILE_NOT_FOUND_ERROR, e.getLocalizedMessage());
-                }                }
+                    return;
+                }
+            }
             int pageCount = renderer.getPageCount();
 
             if(bVariableLength && pageCount > 1)
@@ -201,13 +202,14 @@ public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
                 finalPath = finalPathFile.getPath();
             }
 
-            if(SGDHelper.isPDFEnabled(connection)) {
-                String scale = "dither scale-to-fit";
-                if (scaleFactorY != -1 && scaleFactorY != -1) {
-                    scale = "dither scale=" + (int) scaleFactorX + "x" + (int) scaleFactorY;
-                }
+            String scale = "dither scale-to-fit";
+            if (scaleFactorY != -1 && scaleFactorY != -1) {
+                scale = "dither scale=" + (int) scaleFactorX + "x" + (int) scaleFactorY;
+            }
 
-                SGD.SET("apl.settings", scale, connection);
+            SGD.SET("apl.settings", scale, connection);
+
+            if(SGDHelper.isPDFEnabled(connection)) {
 
                 for(int copy = 0; copy < nbCopies; copy++) {
                     printer.sendFileContents(finalPath, new ProgressMonitor() {
@@ -227,14 +229,48 @@ public class SendPDFTask extends AsyncTask<Void, Boolean, Boolean> {
             }
             else
             {
-                for(int page = 0; page < pageCount; page++)
+                PrinterLanguage pl = printer.getPrinterControlLanguage();
+                if (pl == PrinterLanguage.ZPL) {
+
+                    for (int page = 0; page < pageCount; page++) {
+                        // Create a zpl for each page and send it to the printer
+                        String zpl = RasterizationHelper.getZPLFromPDFFile(filePath, page, mDPI, nbCopies, bVariableLength, nVariableLengthTopMargin);
+                        Log.v(TAG, "Zpl to print:\n" + "--------------------------\n" + zpl + "\n--------------------");
+                        Log.v(TAG, "Printing page:" + (page + 1) + " using ZPL.");
+                        byte[] zplBytes = zpl.getBytes();
+                        connection.write(zplBytes);
+                    }
+                }
+                else
                 {
-                    // Create a zpl for each page and send it to the printer
-                    String zpl = ZPLHelper.getZPL(filePath, page, mDPI, nbCopies, bVariableLength, nVariableLengthTopMargin);
-                    Log.v(TAG, "Zpl to print:\n" + "--------------------------\n" + zpl + "\n--------------------");
-                    Toast.makeText(context, "Printing page:" + (page+1) + " using ZPL.", Toast.LENGTH_SHORT).show();
-                    byte[] zplBytes = zpl.getBytes();
-                    connection.write(zplBytes);
+                    if(pl == PrinterLanguage.CPCL)
+                    {
+                        for (int page = 0; page < pageCount; page++) {
+                            // Create a cpcl for each page and send it to the printer
+                            String zpl = RasterizationHelper.getCPCFromPDFFile(filePath, page, mDPI, nbCopies);
+                            Log.v(TAG, "Zpl to print:\n" + "--------------------------\n" + zpl + "\n--------------------");
+                            Log.v(TAG, "Printing page:" + (page + 1) + " using ZPL.");
+                            byte[] zplBytes = zpl.getBytes();
+                            connection.write(zplBytes);
+                        }
+                    }
+                    else if (pl == PrinterLanguage.LINE_PRINT)
+                    {
+                        if(callback != null)
+                        {
+                            callback.onError(SendPDFTaskErrors.CONFIGURATION_ERROR, "Pdf can't be printed in line_print mode");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Log.e(TAG, "Language not found");
+                        if(callback != null)
+                        {
+                            callback.onError(SendPDFTaskErrors.PRINTER_LANGUAGE_UNKNOWN, "pl = " + pl.toString());
+                            return;
+                        }
+                    }
                 }
             }
         } catch (ConnectionException e) {

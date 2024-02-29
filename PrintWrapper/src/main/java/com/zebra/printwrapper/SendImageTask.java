@@ -1,5 +1,6 @@
 package com.zebra.printwrapper;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -8,15 +9,19 @@ import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 import com.zebra.sdk.comm.TcpConnection;
 import com.zebra.sdk.device.ProgressMonitor;
+import com.zebra.sdk.device.ZebraIllegalArgumentException;
+import com.zebra.sdk.graphics.internal.ZebraImageAndroid;
 import com.zebra.sdk.printer.PrinterStatus;
 import com.zebra.sdk.printer.ZebraPrinter;
 import com.zebra.sdk.printer.ZebraPrinterFactory;
 import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
-public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
+import java.io.IOException;
 
-    public enum SendFileTaskErrors
+public class SendImageTask extends AsyncTask<Void, Boolean, Boolean> {
+
+    public enum SendImageTaskErrors
     {
         NO_PRINTER,
         EMPTY_FILE_PATH,
@@ -25,31 +30,35 @@ public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
         PAPER_OUT,
         UNKNOWN_PRINTER_STATUS,
         CONNECTION_ERROR,
-        PRINTER_LANGUAGE_UNKNOWN
+        PRINTER_LANGUAGE_UNKNOWN,
+        RUNTIME_EXCEPTION,
+        IO_EXCEPTION
     }
 
-    public interface SendFileTaskCallback
+    public interface SendImageTaskCallback
     {
-        void onError(SendFileTaskErrors error, String message);
-        void onPrintProgress(String fileName, int progress, int bytesWritten, int totalBytes);
+        void onError(SendImageTaskErrors error, String message);
         void onSuccess();
     }
 
 
-    private static final String TAG = "SEND_FILE_TASK";
+    private static final String TAG = "SEND_IMAGE_TASK";
     private DiscoveredPrinter printer;
     private String filePath;
-    private SendFileTaskCallback callback = null;
+
+    private boolean storeImage = false;
+    private SendImageTaskCallback callback = null;
 
     /**
      *
      * @param filePath
      * @param printer
      */
-    public SendFileTask(String filePath, DiscoveredPrinter printer, SendFileTaskCallback callback) {
+    public SendImageTask(String filePath, boolean storeImage, DiscoveredPrinter printer, SendImageTaskCallback callback) {
         this.printer = printer;
         this.filePath = filePath;
         this.callback = callback;
+        this.storeImage = storeImage;
     }
 
     @Override
@@ -66,7 +75,7 @@ public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
         {
             if(callback != null)
             {
-                callback.onError(SendFileTaskErrors.EMPTY_FILE_PATH, "Empty PDF file path");
+                callback.onError(SendImageTaskErrors.EMPTY_FILE_PATH, "Empty PDF file path");
             }
             return;
         }
@@ -89,7 +98,7 @@ public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
             {
                 if(callback != null)
                 {
-                    callback.onError(SendFileTaskErrors.NO_PRINTER, "No printer found");
+                    callback.onError(SendImageTaskErrors.NO_PRINTER, "No printer found");
                 }
                 return;
             }
@@ -101,7 +110,7 @@ public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
                 if (printerStatus.isPaused) {
                     if(callback != null)
                     {
-                        callback.onError(SendFileTaskErrors.PRINTER_PAUSED, "Printer is paused");
+                        callback.onError(SendImageTaskErrors.PRINTER_PAUSED, "Printer is paused");
                     }
                     return;
                     }
@@ -109,14 +118,14 @@ public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
                 {
                     if(callback != null)
                     {
-                        callback.onError(SendFileTaskErrors.HEAD_OPEN, "Printer's head is open");
+                        callback.onError(SendImageTaskErrors.HEAD_OPEN, "Printer's head is open");
                     }
                     return;
                 } else if (printerStatus.isPaperOut)
                 {
                     if(callback != null)
                     {
-                        callback.onError(SendFileTaskErrors.PAPER_OUT, "Paper is out");
+                        callback.onError(SendImageTaskErrors.PAPER_OUT, "Paper is out");
                     }
                     return;
                 }
@@ -124,37 +133,40 @@ public class SendFileTask extends AsyncTask<Void, Boolean, Boolean> {
                 {
                     if(callback != null)
                     {
-                        callback.onError(SendFileTaskErrors.UNKNOWN_PRINTER_STATUS, "Unknown printer status");
+                        callback.onError(SendImageTaskErrors.UNKNOWN_PRINTER_STATUS, "Unknown printer status");
                     }
                     return;
                 }
             }
 
-            printer.sendFileContents(filePath, new ProgressMonitor() {
-                @Override
-                public void updateProgress(int bytesWritten, int totalBytes) {
-                    // Calc Progress
-                    double rawProgress = bytesWritten * 100 / totalBytes;
-                    int progress = (int) Math.round(rawProgress);
+            Bitmap image = RasterizationHelper.loadFromFile(filePath);
+            ZebraImageAndroid zebraImage = new ZebraImageAndroid(image);
 
-                    // Notify progress
-                    if(callback != null)
-                    {
-                        callback.onPrintProgress(filePath, progress, bytesWritten, totalBytes);
-                    }
-                }
-            });
+            if(storeImage)
+            {
+                printer.storeImage(filePath, zebraImage, zebraImage.getWidth(), zebraImage.getHeight());
+            }
+            else
+            {
+                printer.printImage(zebraImage, 0,0, zebraImage.getWidth(), zebraImage.getHeight(), false);
+            }
         } catch (ConnectionException e) {
             e.printStackTrace();
             if(callback != null)
             {
-                callback.onError(SendFileTaskErrors.CONNECTION_ERROR, e.getLocalizedMessage());
+                callback.onError(SendImageTaskErrors.CONNECTION_ERROR, e.getLocalizedMessage());
             }
         } catch (ZebraPrinterLanguageUnknownException e) {
             e.printStackTrace();
             if(callback != null)
             {
-                callback.onError(SendFileTaskErrors.PRINTER_LANGUAGE_UNKNOWN, e.getLocalizedMessage());
+                callback.onError(SendImageTaskErrors.PRINTER_LANGUAGE_UNKNOWN, e.getLocalizedMessage());
+            }
+        } catch (ZebraIllegalArgumentException e) {
+            e.printStackTrace();
+            if(callback != null)
+            {
+                callback.onError(SendImageTaskErrors.RUNTIME_EXCEPTION, e.getLocalizedMessage());
             }
         } finally {
             try {
