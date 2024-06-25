@@ -9,6 +9,8 @@ import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 
 public class GetPrinterStatusTask extends ExecutorTask<DiscoveredPrinter, Boolean, PrinterStatus>{
+    public PrinterStatus printerStatus = null;
+
     @Override
     protected PrinterStatus doInBackground(DiscoveredPrinter... printerParams) {
         DiscoveredPrinter selectedPrinter = printerParams[0];
@@ -41,5 +43,11 @@ public class GetPrinterStatusTask extends ExecutorTask<DiscoveredPrinter, Boolea
             }
         }
     return printerStatus;
+    }
+
+    @Override
+    protected void onPostExecute(PrinterStatus printerStatus) {
+        super.onPostExecute(printerStatus);
+        this.printerStatus = printerStatus;
     }
 }
