@@ -82,29 +82,6 @@ public class SGDHelper {
         }
 
         if (printer instanceof DiscoveredPrinterBluetooth) {
-            //class BluetoothConnectionQuickClose extends BluetoothConnection {
-//
-            //    public BluetoothConnectionQuickClose(String address) {
-            //        super(address);
-            //    }
-//
-            //    @Override
-            //    public void close() throws ConnectionException {
-            //        this.friendlyName = "";
-            //        if (this.isConnected) {
-            //            this.isConnected = false;
-//
-            //            try {
-            //                this.inputStream.close();
-            //                this.outputStream.close();
-            //                this.commLink.close();
-            //            } catch (IOException e) {
-            //                // Ugly... don't even know if it will be helpful or not...
-            //                throw new ConnectionException(e.getMessage());
-            //            }
-            //        }
-            //    }
-            //}
             if (callback != null) {
                 callback.onMessage("Connecting to bluetooth Printer: " + printer.address);
             }
@@ -145,20 +122,6 @@ public class SGDHelper {
                 throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Could not establish connection with BluetoothPrinter."));
             }
         } else if (printer instanceof DiscoveredPrinterNetwork) {
-            //class MultiChannelQuickClose extends MultichannelTcpConnection {
-//
-            //    public MultiChannelQuickClose(DiscoveredPrinter printer) {
-            //        super(printer);
-            //    }
-//
-            //    @Override
-            //    public void close() throws ConnectionException {
-            //        if (this.isConnected()) {
-            //            this.closePrintingChannel();
-            //            this.closeStatusChannel();
-            //        }
-            //    }
-            //}
             if (callback != null) {
                 callback.onMessage("Connecting to Network Printer: " + printer.address);
             }
