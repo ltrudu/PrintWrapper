@@ -17,8 +17,8 @@ android {
     defaultConfig {
         minSdkVersion 25
         targetSdkVersion 34
-        versionCode 9
-        versionName "1.8"
+        versionCode 10
+        versionName "1.9.34"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
