@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 public class PrinterDiscoveryDataMapHelper {
 
     private static final String TAG = "USBConnect";
