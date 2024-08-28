@@ -113,7 +113,12 @@ public class PrinterDiscoveryDataMapHelper {
             if(connection.isConnected())
             {
                 discoveryMap = selectedPrinter.getDiscoveryDataMap();
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.PRODUCT_NAME, SGD.GET("device.product_name", connection));
                 discoveryMap.put(PrinterDiscoveryDataMapKeys.DEVICE_LANGUAGE, SGD.GET("device.languages", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.LINK_OS_MAJOR_VER, SGD.GET("appl.link_os_version", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.PRODUCT_NAME, SGD.GET("device.product_name", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.FIRMWARE_VER, SGD.GET("appl.name", connection));
+                discoveryMap.put(PrinterDiscoveryDataMapKeys.SERIAL_NUMBER, SGD.GET("device.unique_id", connection));
                 discoveryMap.put(PrinterDiscoveryDataMapKeys.APL_MODE, SGDHelper.getAplMode(connection));
                 discoveryMap.put(PrinterDiscoveryDataMapKeys.PDF_ENABLED, discoveryMap.get(PrinterDiscoveryDataMapKeys.APL_MODE).equalsIgnoreCase("pdf") ? "true" : "false");
                 discoveryMap.put(PrinterDiscoveryDataMapKeys.CONNEXION_TYPE, PrinterDiscoveryDataMapKeys.CONNEXION_TYPE_NETWORK);

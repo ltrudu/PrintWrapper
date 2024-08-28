@@ -8,6 +8,7 @@ import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 import com.zebra.sdk.comm.MultichannelTcpConnection;
+import com.zebra.sdk.comm.TcpConnection;
 import com.zebra.sdk.printer.SGD;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinterBluetooth;
@@ -75,6 +76,10 @@ public class SGDHelper {
                         mConnection = null;
                     }
                 } catch (ConnectionException e) {
+                    if(callback != null)
+                    {
+                        callback.onMessage(e.getMessage());
+                    }
                     e.printStackTrace();
                     mConnection = null;
                 }
@@ -112,6 +117,7 @@ public class SGDHelper {
                 }
             } catch (ConnectionException e) {
                 e.printStackTrace();
+                String exceptionError = e.getMessage();
                 try {
                     mConnection.close();
                     mConnection = null;
@@ -119,14 +125,15 @@ public class SGDHelper {
                     ex.printStackTrace();
                     mConnection = null;
                 }
-                throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Could not establish connection with BluetoothPrinter."));
+                throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Could not establish connection with BluetoothPrinter, with error: " + exceptionError));
             }
         } else if (printer instanceof DiscoveredPrinterNetwork) {
             if (callback != null) {
                 callback.onMessage("Connecting to Network Printer: " + printer.address);
             }
-            mConnection = new MultichannelTcpConnection(printer);
-            try {
+           try {
+                mConnection = new TcpConnection(printer.address, PrintWrapperHelpers.getNetworkPrinterPort(printer));
+
                 if (callback != null) {
                     callback.onMessage("Opening connection.");
                 }
@@ -149,7 +156,7 @@ public class SGDHelper {
                     }
                     throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Could not establish connection with Network Printer."));
                 }
-            } catch (ConnectionException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 try {
                     mConnection.close();
