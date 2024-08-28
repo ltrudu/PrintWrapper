@@ -7,7 +7,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = 'com.zebra.printwrapper'
     PUBLISH_ARTIFACT_ID = 'PrintWrapper'
-    PUBLISH_VERSION = '1.2.0'
+    PUBLISH_VERSION = '1.11'
 }
 
 android {
@@ -20,7 +20,7 @@ android {
         minSdkVersion 29
         targetSdkVersion 34
         versionCode 12
-        versionName "1.2.0"
+        versionName "1.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
