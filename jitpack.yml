@@ -3,7 +3,6 @@ jdk:
 
 install:
   - apt-get update
-  - apt-get install -y software-properties-common
-  - apt-add-repository ppa:ubuntu-toolchain-r/test
-  - apt-get update
-  - apt-get install -y cmake=3.22.1-0kitware1
+  - yes | sdkmanager "cmake;3.22.1"
+  - export CMAKE_PATH=$ANDROID_HOME/cmake/3.22.1/bin
+  - export PATH=$CMAKE_PATH:$PATH
