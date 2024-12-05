@@ -4,8 +4,6 @@ jdk: - openjdk17
 # Optional: Run pre-build tasks
 before_install:
   - yes | sdkmanager --licenses
-  - yes | sdkmanager --update
-  - yes | sdkmanager --uninstall "ndk-bundle"
   - yes | sdkmanager --install "ndk;28.0.12674087"
   - yes | sdkmanager --install "cmake;3.22.1"
   
