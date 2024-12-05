@@ -1,5 +1,24 @@
 jdk:
   - openjdk17
 
-install:
-  - yes | sdkmanager "cmake;3.22.1"
+before_install:
+  # Update package list and install necessary tools
+  - apt-get update
+  - apt-get install -y wget unzip
+
+  # Download Android command line tools
+  - wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O cmdline-tools.zip
+  - mkdir -p /usr/local/android-sdk/cmdline-tools
+  - unzip cmdline-tools.zip -d /usr/local/android-sdk/cmdline-tools
+  - mv /usr/local/android-sdk/cmdline-tools/cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
+
+  # Set up Android SDK environment variables
+  - export ANDROID_SDK_ROOT=/usr/local/android-sdk
+  - export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
+
+  # Install necessary components using sdkmanager
+  - yes | sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools" "platforms;android-33" "cmake;3.22.1"
+
+  # Add CMake to the PATH
+  - export CMAKE_PATH=$ANDROID_SDK_ROOT/cmake/3.22.1/bin
+  - export PATH=$CMAKE_PATH:$PATH
