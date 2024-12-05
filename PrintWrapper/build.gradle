@@ -2,19 +2,26 @@
 
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
+}
+
+ext {
+    PUBLISH_GROUP_ID = 'com.zebra.printwrapper'
+    PUBLISH_ARTIFACT_ID = 'printwrapper'
+    PUBLISH_VERSION = '1.15'
 }
 
 android {
     namespace 'com.zebra.printwrapper'
 
-    ndkVersion "21.0.6113669"
-    compileSdkVersion 34
+    ndkVersion '28.0.12674087 rc2'
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 29
-        targetSdkVersion 34
-        versionCode 12
-        versionName "1.12"
+        minSdkVersion 24
+        targetSdkVersion 33
+        versionCode 15
+        versionName "1.15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -76,47 +83,7 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.zebra.printwrapper'
-                artifactId = 'printwrapper'
-                version = '1.12'
             }
         }
     }
 }
-
-def jarName = 'PrintWrapper.jar'
-
-task clearJarRelease(type: Delete) {
-    delete "${project.buildDir}/outputs/jar/release/" + jarName
-}
-
-task clearJarDebug(type: Delete) {
-    delete "${project.buildDir}/outputs/jar/debug/" + jarName
-}
-
-task makeJarRelease(type: Copy) {
-    from("${project.buildDir}/intermediates/intermediates/aar_main_jar/release/")
-    into("${project.buildDir}/outputs/jar/release")
-    include('classes.jar')
-    rename('classes.jar', jarName)
-}
-
-task makeJarDebug(type: Copy) {
-    from("${project.buildDir}/intermediates/intermediates/aar_main_jar/debug/")
-    into("${project.buildDir}/outputs/jar/debug")
-    include('classes.jar')
-    rename('classes.jar', jarName)
-}
-
-task makeAllJar(type: Copy) {}
-
-makeJarRelease.dependsOn(clearJarRelease, build)
-makeJarDebug.dependsOn(clearJarDebug, build)
-
-makeAllJar.dependsOn(makeJarDebug,makeJarRelease)
-
-/*
-Publish tasks
-https://medium.com/@daniellevass/how-to-publish-your-android-studio-library-to-jcenter-5384172c4739
-https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle
- */
