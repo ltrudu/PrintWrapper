@@ -2,7 +2,4 @@ jdk:
   - openjdk17
 
 install:
-  - apt-get update
   - yes | sdkmanager "cmake;3.22.1"
-  - export CMAKE_PATH=$ANDROID_HOME/cmake/3.22.1/bin
-  - export PATH=$CMAKE_PATH:$PATH
