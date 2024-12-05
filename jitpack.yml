@@ -1,5 +1,9 @@
 jdk:
   - openjdk17
 
-before_install:
-  - yes | sdkmanager "cmake;3.22.1"
+install:
+  - apt-get update
+  - apt-get install -y software-properties-common
+  - apt-add-repository ppa:ubuntu-toolchain-r/test
+  - apt-get update
+  - apt-get install -y cmake=3.22.1-0kitware1
