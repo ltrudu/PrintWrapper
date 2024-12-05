@@ -1,10 +1,11 @@
-jdk:
-  - openjdk17
-
 before_install:
-  # Update package list and install necessary tools
+  # Install OpenJDK 17
   - apt-get update
-  - apt-get install -y wget unzip
+  - apt-get install -y openjdk-17-jdk wget unzip
+
+  # Set JAVA_HOME environment variable
+  - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+  - export PATH=$JAVA_HOME/bin:$PATH
 
   # Download Android command line tools
   - wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O cmdline-tools.zip
