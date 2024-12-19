@@ -8,8 +8,8 @@
 #  - yes | sdkmanager --install "ndk;28.0.12674087"
 #  - yes | sdkmanager --install "cmake;3.22.1"
 
-jdk:
-  - openjdk17
+#jdk:
+#  - openjdk17
 
 android:
   components:
@@ -24,9 +24,9 @@ android:
     - 'google-gdk-license-.+'
 
 before_install:
+  - yes | sdkmanager --licenses
   - yes | sdkmanager "cmake;3.22.1"
   - yes | sdkmanager "ndk;28.0.12674087"
-  - yes | sdkmanager --licenses
 
 install:
   - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12674087
