@@ -15,13 +15,13 @@ android {
     namespace 'com.zebra.printwrapper'
 
     ndkVersion '28.0.12674087 rc2'
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 33
-        versionCode 14
-        versionName "1.14"
+        targetSdkVersion 34
+        versionCode 15
+        versionName "1.15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -73,7 +73,6 @@ dependencies {
     implementation files('libs/jackson-core-2.2.3.jar')
     implementation files('libs/jackson-annotations-2.2.3.jar')
     implementation files('libs/jackson-databind-2.2.3.jar')
-    testImplementation 'junit:junit:4.12'
     implementation 'com.tom-roush:pdfbox-android:2.0.27.0'
 
 }
@@ -82,7 +81,7 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
+                from components.findByName('release')
             }
         }
     }
