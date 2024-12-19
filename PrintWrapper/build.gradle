@@ -8,7 +8,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = 'com.zebra.printwrapper'
     PUBLISH_ARTIFACT_ID = 'printwrapper'
-    PUBLISH_VERSION = '1.14'
+    PUBLISH_VERSION = '1.15'
 }
 
 android {

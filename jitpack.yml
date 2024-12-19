@@ -11,18 +11,27 @@
 jdk:
   - openjdk17
 
-before_install:
-  # Accept licenses by copying the hash from sdkmanager
-  - mkdir -p $HOME/android-sdk/licenses
-  - yes | sdkmanager --licenses > /dev/null 2>&1
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-34.0.0
+    - android-34
 
-  # Install Android SDK components
-  - yes | sdkmanager --install "cmake;3.22.1"
-  - yes | sdkmanager --install "ndk;28.0.12674087"
+  licenses:
+    - 'android-sdk-license-.+'
+    - 'android-sdk-preview-license-.+'
+    - 'google-gdk-license-.+'
+
+before_install:
+  - yes | sdkmanager "cmake;3.22.1"
+  - yes | sdkmanager "ndk;28.0.12674087"
+  - yes | sdkmanager --licenses
 
 install:
-  - ./gradlew clean build --no-daemon
+  - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12674087
+  - export PATH=$PATH:$ANDROID_HOME/cmake/3.22.1/bin
+  - chmod +x gradlew
 
-env:
-  ANDROID_HOME: $HOME/android-sdk
-  ANDROID_SDK_ROOT: $HOME/android-sdk
+script:
+  - ./gradlew clean build
