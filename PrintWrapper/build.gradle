@@ -14,6 +14,7 @@ ext {
 android {
     namespace 'com.zebra.printwrapper'
 
+    ndkVersion '28.0.12674087 rc2'
     compileSdkVersion 34
 
     defaultConfig {
@@ -21,6 +22,18 @@ android {
         targetSdkVersion 34
         versionCode 17
         versionName "1.17"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++14"
+            }
+        }
+        ndk {
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     buildTypes {
@@ -31,6 +44,12 @@ android {
         debug {
             versionNameSuffix " - Debug"
             debuggable true
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
         }
     }
     compileOptions {

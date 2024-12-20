@@ -1,3 +1,44 @@
 # Configure the JDK version
-jdk:
-  - openjdk17
+#jdk:
+#  - openjdk17
+
+# Optional: Run pre-build tasks
+#before_install:
+#  - yes | sdkmanager --licenses
+#  - yes | sdkmanager --install "ndk;28.0.12674087"
+#  - yes | sdkmanager --install "cmake;3.22.1"
+
+##################################################################################
+
+#jdk:
+#  - openjdk17
+
+#android:
+#  components:
+#    - tools
+#    - platform-tools
+#    - build-tools-34.0.0
+#    - android-34
+#
+#  licenses:
+#    - 'android-sdk-license-.+'
+#    - 'android-sdk-preview-license-.+'
+#    - 'google-gdk-license-.+'
+#
+#before_install:
+#  - yes | sdkmanager --licenses
+#  - yes | sdkmanager "cmake;3.22.1"
+#  - yes | sdkmanager "ndk;28.0.12674087"
+
+#install:
+#  - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12674087
+#  - export PATH=$PATH:$ANDROID_HOME/cmake/3.22.1/bin
+#  - chmod +x gradlew
+
+#script:
+# - ./gradlew clean build
+
+#################################################################################################
+
+before_install:
+  - yes | sdkmanager "cmake;3.22.1"

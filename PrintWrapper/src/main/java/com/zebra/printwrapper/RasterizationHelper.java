@@ -19,6 +19,10 @@ public class RasterizationHelper {
 
     private static String TAG = RasterizationHelper.class.getName();
 
+    public static native String getUtilsVersion();
+    public static native String createBitmapZPL(Bitmap bitmap);
+    public static native String createBitmapCPC(Bitmap bitmap);
+
     public static Bitmap loadFromFile(String filename) {
         try {//from   ww  w.j a  va  2  s.c  om
             File f = new File(filename);
@@ -90,7 +94,7 @@ public class RasterizationHelper {
         Log.i(TAG, "Creating CPC");
         printData.append("! 0 " + dpi + " " + dpi + " " + iWidth + " 1\r\n");
         printData.append("EG " + iWidth + " " + iHeight + " 0 0 ");
-        printData.append(BitmapCPCLConverter.createBitmapCPC(bitmap));
+        printData.append(RasterizationHelper.createBitmapCPC(bitmap));
         printData.append("\r\n");
         printData.append("PRINT\r\n");
         Log.i(TAG, "CPCL Data: \n"+ printData);
@@ -173,7 +177,7 @@ public class RasterizationHelper {
         StringBuilder printData = new StringBuilder();
         // By default create ZPL Data
         //Create ZPL
-        String ZPLBitmap = BitmapZPLConverter.createBitmapZPL(bitmap);
+        String ZPLBitmap = RasterizationHelper.createBitmapZPL(bitmap);
         Log.i(TAG, "Creating ZPL");
         printData.append("^XA");
         if(variableLengthEnabled == true)
