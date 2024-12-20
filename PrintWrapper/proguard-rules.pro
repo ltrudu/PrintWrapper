@@ -19,20 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
-#-renamesourcefileattribute SourceFile
-#noinspection ShrinkerUnresolvedReference
--keepclassmembers class **.RasterizationHelper {
-    native <methods>;
-    #noinspection ShrinkerUnresolvedReference
-    String getUtilsVersion();
-    #noinspection ShrinkerUnresolvedReference,ShrinkerUnresolvedReference
-    String createBitmapZPL(Bitmap);
-    #noinspection ShrinkerUnresolvedReference,ShrinkerUnresolvedReference
-    String createBitmapCPC(Bitmap);
-}
-
-# Parceler library
--keep interface org.parceler.Parcel
--keep @org.parceler.Parcel class * { *; }
--keep class **$$Parcelable { *; }
