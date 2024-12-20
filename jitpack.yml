@@ -28,10 +28,10 @@ before_install:
   - yes | sdkmanager "cmake;3.22.1"
   - yes | sdkmanager "ndk;28.0.12674087"
 
-install:
-  - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12674087
-  - export PATH=$PATH:$ANDROID_HOME/cmake/3.22.1/bin
-  - chmod +x gradlew
+#install:
+#  - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12674087
+#  - export PATH=$PATH:$ANDROID_HOME/cmake/3.22.1/bin
+#  - chmod +x gradlew
 
-script:
- - ./gradlew clean build
+#script:
+# - ./gradlew clean build
