@@ -8,7 +8,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = 'com.zebra.printwrapper'
     PUBLISH_ARTIFACT_ID = 'printwrapper'
-    PUBLISH_VERSION = '1.16'
+    PUBLISH_VERSION = '1.17'
 }
 
 android {
@@ -19,8 +19,8 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 16
-        versionName "1.16"
+        versionCode 17
+        versionName "1.17"
     }
 
     buildTypes {
