@@ -21,9 +21,6 @@ android {
         targetSdkVersion 34
         versionCode 16
         versionName "1.16"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -42,17 +39,7 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-    resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-}
-
-
 dependencies {
-    //implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-
     implementation files('libs/ZSDK_ANDROID_API.jar')
     implementation files('libs/jackson-core-2.2.3.jar')
     implementation files('libs/jackson-annotations-2.2.3.jar')
