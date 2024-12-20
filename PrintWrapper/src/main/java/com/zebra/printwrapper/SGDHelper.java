@@ -13,6 +13,7 @@ import com.zebra.sdk.printer.SGD;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinterBluetooth;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinterNetwork;
+import com.zebra.sdk.printer.discovery.DiscoveredPrinterUsb;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -90,7 +91,7 @@ public class SGDHelper {
             if (callback != null) {
                 callback.onMessage("Connecting to bluetooth Printer: " + printer.address);
             }
-            mConnection = new BluetoothConnection(printer.address);
+            mConnection = printer.getConnection();
             try {
                 if (callback != null) {
                     callback.onMessage("Opening connection.");
@@ -132,7 +133,7 @@ public class SGDHelper {
                 callback.onMessage("Connecting to Network Printer: " + printer.address);
             }
            try {
-                mConnection = new TcpConnection(printer.address, PrintWrapperHelpers.getNetworkPrinterPort(printer));
+                mConnection = printer.getConnection();
 
                 if (callback != null) {
                     callback.onMessage("Opening connection.");
@@ -166,9 +167,37 @@ public class SGDHelper {
                     mConnection = null;
                 }
             }
+
             throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Could not establish connection with Network Printer."));
         }
-        throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Printer connexion type not supported. USB ?"));
+        else if(printer instanceof DiscoveredPrinterUsb) {
+            try {
+                mConnection = printer.getConnection();
+                mConnection.open();
+                if (mConnection.isConnected() == true) {
+                    if (callback != null) {
+                        callback.onMessage("Connection opened with success.");
+                    }
+                    return mConnection;
+                } else {
+                    if (callback != null) {
+                        callback.onMessage("Error:Could not connect to printer.");
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                try {
+                    mConnection.close();
+                    mConnection = null;
+                } catch (ConnectionException ex) {
+                    ex.printStackTrace();
+                    mConnection = null;
+                }
+            }
+            throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Could not establish connection with USB Printer."));
+        }
+        throw new PrinterWrapperException(new Exception("SGDHelper.connectToPrinter: Printer connexion type not supported."));
     }
 
     public static String GET(String propertyName, DiscoveredPrinter discoveredPrinter, SGDHelperCallback callback) throws PrinterWrapperException {

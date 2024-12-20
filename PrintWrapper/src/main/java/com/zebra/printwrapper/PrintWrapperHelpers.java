@@ -3,6 +3,7 @@ package com.zebra.printwrapper;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinterBluetooth;
 import com.zebra.sdk.printer.discovery.DiscoveredPrinterNetwork;
+import com.zebra.sdk.printer.discovery.DiscoveredPrinterUsb;
 
 import java.util.Map;
 
@@ -26,6 +27,16 @@ public class PrintWrapperHelpers {
     public static boolean isNetworkPrinter(DiscoveredPrinter printer)
     {
         return printer instanceof DiscoveredPrinterNetwork;
+    }
+
+    /**
+     * Verify if printer is a usb printer
+     * @param printer
+     * @return true if printer is a network printer
+     */
+    public static boolean isUSBPrinter(DiscoveredPrinter printer)
+    {
+        return printer instanceof DiscoveredPrinterUsb;
     }
 
     /**

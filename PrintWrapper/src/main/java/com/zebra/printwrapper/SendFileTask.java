@@ -71,15 +71,7 @@ public class SendFileTask extends ExecutorTask<Void, Boolean, Boolean> {
             return;
         }
 
-        Connection connection = null;
-        if(PrintWrapperHelpers.isBluetoothPrinter(printer))
-        {
-            connection = new BluetoothConnection(printer.address);
-        }
-        else
-        {
-            connection = new TcpConnection(printer.address, PrintWrapperHelpers.getNetworkPrinterPort(printer));
-        }
+        Connection connection = printer.getConnection();
 
         try {
             connection.open();
