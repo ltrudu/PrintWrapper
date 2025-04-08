@@ -198,4 +198,31 @@ public class RasterizationHelper {
 
         return printData.toString();
     }
+
+    public static String getZPLFromBitmapSoftware(Bitmap bitmap, int iWidth, int iHeight, int nbCopies, boolean variableLengthEnabled, int vlTopMargin)
+    {
+        StringBuilder printData = new StringBuilder();
+        // By default create ZPL Data
+        //Create ZPL
+        String ZPLBitmap = BitmapZPLConverter.createBitmapZPL(bitmap);
+        Log.i(TAG, "Creating ZPL");
+        printData.append("^XA");
+        if(variableLengthEnabled == true)
+        {
+            printData.append("^MNN");
+            printData.append("^LL"+ (iHeight + vlTopMargin));
+            printData.append("^LH0," + vlTopMargin);
+        }
+        printData.append("^PW"+(iWidth*8));
+        printData.append("^FO,0,0^GFA," + iWidth*iHeight + "," + iWidth*iHeight + "," + iWidth + ",");
+        printData.append(ZPLBitmap);
+        if(nbCopies > 1) {
+            // Add ^PQ to jobs like printing the same label many times (single page documents)
+            printData.append("^PQ" + nbCopies);
+        }
+        printData.append("^XZ\r\n\r\n");
+        Log.i(TAG, "ZPL Data: \n"+ printData);
+
+        return printData.toString();
+    }
 }

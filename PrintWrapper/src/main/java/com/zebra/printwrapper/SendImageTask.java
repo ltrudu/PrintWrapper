@@ -45,6 +45,7 @@ public class SendImageTask extends ExecutorTask<Void, Boolean, Boolean> {
     private static final String TAG = "SEND_IMAGE_TASK";
     private DiscoveredPrinter printer;
     private String filePath;
+    private Bitmap imageBitmap;
 
     private boolean storeImage = false;
     private SendImageTaskCallback callback = null;
@@ -59,6 +60,15 @@ public class SendImageTask extends ExecutorTask<Void, Boolean, Boolean> {
         this.filePath = filePath;
         this.callback = callback;
         this.storeImage = storeImage;
+        this.imageBitmap = null;
+    }
+
+    public SendImageTask(Bitmap imageBitmap, boolean storeImage, DiscoveredPrinter printer, SendImageTaskCallback callback) {
+        this.printer = printer;
+        this.filePath = null;
+        this.callback = callback;
+        this.storeImage = storeImage;
+        this.imageBitmap = imageBitmap;
     }
 
     @Override
@@ -71,11 +81,11 @@ public class SendImageTask extends ExecutorTask<Void, Boolean, Boolean> {
     private void sendPrint() {
         Log.i(TAG, "sendPrint()");
 
-        if (filePath == null)
+        if (imageBitmap == null && filePath == null)
         {
             if(callback != null)
             {
-                callback.onError(SendImageTaskErrors.EMPTY_FILE_PATH, "Empty PDF file path");
+                callback.onError(SendImageTaskErrors.EMPTY_FILE_PATH, "Empty file path");
             }
             return;
         }
@@ -83,7 +93,9 @@ public class SendImageTask extends ExecutorTask<Void, Boolean, Boolean> {
         Connection connection = printer.getConnection();
 
         try {
-            connection.open();
+            if(connection.isConnected() == false)
+                connection.open();
+
             ZebraPrinter printer = ZebraPrinterFactory.getInstance(connection);
 
             if(printer == null)
@@ -131,7 +143,14 @@ public class SendImageTask extends ExecutorTask<Void, Boolean, Boolean> {
                 }
             }
 
-            Bitmap image = RasterizationHelper.loadFromFile(filePath);
+            Bitmap image;
+            if(imageBitmap != null)
+                image = imageBitmap;
+            else
+            {
+                image = RasterizationHelper.loadFromFile(filePath);
+            }
+
             ZebraImageAndroid zebraImage = new ZebraImageAndroid(image);
 
             if(storeImage)
