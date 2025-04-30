@@ -272,6 +272,80 @@ public class SGDHelper {
         return getPropertyResponse;
     }
 
+    public static String GET(String propertyName, DiscoveredPrinter discoveredPrinter,
+                             int maxTimeoutForRead, int timeToWaitForMoreData,
+                             SGDHelperCallback callback) throws PrinterWrapperException {
+        if (callback != null) {
+            callback.onMessage("Initiating connection with printer.");
+        }
+        Connection connection = connectToPrinter(discoveredPrinter, callback);
+        if (connection == null) {
+            throw new PrinterWrapperException(new Exception("Connexion error: connection object is null"), null);
+        }
+        if (callback != null) {
+            callback.onMessage("Connection with printer succeeded.");
+        }
+        int retryCount = 0;
+        String getPropertyResponse = "";
+        while (true) {
+            if (getPropertyResponse.length() != 0) {
+                if (callback != null) {
+                    callback.onMessage("GET property: " + propertyName + " succeeded.");
+                }
+                break;
+            }
+            int retryCount2 = retryCount + 1;
+            if (retryCount >= 10) {
+                if (callback != null) {
+                    callback.onMessage("Error, could not GET property: " + propertyName + " in 10 tries.");
+                }
+                break;
+            }
+
+            if (callback != null) {
+                callback.onMessage("GET on property: " + propertyName + " tryCount: " + retryCount);
+            }
+
+            if (retryCount > 0) {
+                if (callback != null) {
+                    callback.onMessage("Sleeping 300ms between method call.");
+                }
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (callback != null) {
+                    callback.onMessage("GET property: " + propertyName);
+                }
+                getPropertyResponse = SGD.GET(propertyName, connection, maxTimeoutForRead, timeToWaitForMoreData);
+                if (callback != null && getPropertyResponse.length() > 0) {
+                    callback.onMessage("Response: " + getPropertyResponse);
+                }
+            } catch (ConnectionException e) {
+                e.printStackTrace();
+                connection = connectToPrinter(discoveredPrinter, callback);
+                if (retryCount2 >= 10) {
+                    throw new PrinterWrapperException(new Exception("SGDHelper.GET::Retry count:" + retryCount2 + "\nConnection Exception :", e.getCause()));
+                }
+            }
+            Log.d(TAG, "Get property: " + propertyName + " response: " + getPropertyResponse + ", retryCount: " + retryCount2);
+            retryCount = retryCount2;
+
+        }
+        if (connection != null && connection.isConnected()) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (ConnectionException e) {
+                throw new PrinterWrapperException(e);
+            }
+        }
+        return getPropertyResponse;
+    }
+
     public static Map<String, String> MULTI_GET(String propertyNamesCommaSeparated, DiscoveredPrinter discoveredPrinter, SGDHelperCallback callback) throws PrinterWrapperException {
         Log.d(TAG, "propertyNamesCommaSeparated:" + propertyNamesCommaSeparated);
         List<String> propertiesList = getListFromCommaSeparatedValues(propertyNamesCommaSeparated, mUseBase64Encoding);
@@ -332,6 +406,98 @@ public class SGDHelper {
                         callback.onMessage("Trying to GET the property.");
                     }
                     getPropertyResponse = SGD.GET(propertyName, connection);
+                } catch (ConnectionException e) {
+                    e.printStackTrace();
+                    connection = connectToPrinter(discoveredPrinter, callback);
+                    if (retryCount2 >= 10) {
+                        throw new PrinterWrapperException(new Exception("SGDHelper.GET::Retry count:" + retryCount2 + "\nConnection Exception :", e.getCause()));
+                    }
+                }
+                Log.d(TAG, "Get property: " + propertyName + " response: " + getPropertyResponse + ", retryCount: " + retryCount2);
+                retryCount = retryCount2;
+            }
+            if (getPropertyResponse.length() > 0) {
+                getPropertyResponses.put(propertyName, getPropertyResponse);
+            }
+        }
+        if (connection != null && connection.isConnected()) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (ConnectionException e) {
+                throw new PrinterWrapperException(e);
+            }
+        }
+        Log.d(TAG, "getPropertyResponses: " + getPropertyResponses.toString());
+        return getPropertyResponses;
+    }
+
+
+    public static Map<String, String> MULTI_GET(String propertyNamesCommaSeparated,
+                                                DiscoveredPrinter discoveredPrinter,
+                                                int maxTimeoutForRead, int timeToWaitForMoreData,
+                                                SGDHelperCallback callback) throws PrinterWrapperException {
+        Log.d(TAG, "propertyNamesCommaSeparated:" + propertyNamesCommaSeparated);
+        List<String> propertiesList = getListFromCommaSeparatedValues(propertyNamesCommaSeparated, mUseBase64Encoding);
+        Log.d(TAG, "List size:" + propertiesList.size());
+        return MULTI_GET(propertiesList, discoveredPrinter, maxTimeoutForRead, timeToWaitForMoreData, callback);
+    }
+
+    public static Map<String, String> MULTI_GET(List<String> propertyNames, DiscoveredPrinter discoveredPrinter,
+                                                int maxTimeoutForRead, int timeToWaitForMoreData,
+                                                SGDHelperCallback callback) throws PrinterWrapperException {
+        if (callback != null) {
+            callback.onMessage("Initiating connection with printer.");
+        }
+
+        Log.d(TAG, "Multiget properties: " + propertyNames.toString());
+
+        Connection connection = connectToPrinter(discoveredPrinter, callback);
+        if (connection == null) {
+            throw new PrinterWrapperException(new Exception("Connexion error: connection object is null"), null);
+        }
+        if (callback != null) {
+            callback.onMessage("Connection with printer succeeded.");
+        }
+        int retryCount = 0;
+        Map<String, String> getPropertyResponses = new HashMap<>();
+        for (String propertyName : propertyNames) {
+            if (callback != null) {
+                callback.onMessage("Seting up things for property: " + propertyName);
+            }
+            String getPropertyResponse = "";
+            while (true) {
+                if (getPropertyResponse.length() != 0) {
+                    if (callback != null) {
+                        callback.onMessage("Get of property: " + propertyName + " succeeded.");
+                    }
+                    break;
+                }
+                int retryCount2 = retryCount + 1;
+                if (retryCount >= 10) {
+                    if (callback != null) {
+                        callback.onMessage("Error, could not get property: " + propertyName + " after 10 tries.");
+                    }
+                    break;
+                }
+                if (callback != null) {
+                    callback.onMessage("GET on property: " + propertyName + " tryCount: " + retryCount);
+                }
+                if (retryCount > 0) {
+                    if (callback != null) {
+                        callback.onMessage("Sleeping 300ms between method call.");
+                    }
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    if (callback != null) {
+                        callback.onMessage("Trying to GET the property.");
+                    }
+                    getPropertyResponse = SGD.GET(propertyName, connection, maxTimeoutForRead, timeToWaitForMoreData);
                 } catch (ConnectionException e) {
                     e.printStackTrace();
                     connection = connectToPrinter(discoveredPrinter, callback);
@@ -655,6 +821,181 @@ public class SGDHelper {
                         callback.onMessage("Executing DO command: " + propertyName + " with value:" + writeValue);
                     }
                     returnValue = SGD.DO(propertyName, writeValue, connection);
+                    if (returnValue.length() > 0) {
+                        if (callback != null) {
+                            callback.onMessage("DO command return value: " + returnValue);
+                        }
+                        returnValues.put(propertyName, returnValue);
+                    } else {
+                        if (callback != null) {
+                            callback.onMessage("DO command returned an empty string, trying again.");
+                        }
+                    }
+                } catch (ConnectionException e) {
+                    e.printStackTrace();
+                    connection = connectToPrinter(discoveredPrinter, callback);
+                    if (retryCount >= 10) {
+                        throw new PrinterWrapperException(new Exception("SGDHelper.GET::Retry count:" + retryCount2 + "\nConnection Exception :", e.getCause()));
+                    }
+                }
+                Log.d(TAG, "Set property: " + propertyName + "\nwrite: " + writeValue + "\nreturned:" + returnValue + "\nretryCount: " + retryCount2);
+                retryCount = retryCount2;
+            }
+        }
+        if (connection != null && connection.isConnected()) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (ConnectionException e) {
+                throw new PrinterWrapperException(e);
+            }
+        }
+        return returnValues;
+    }
+
+    public static String DO(final String setting, final String value, DiscoveredPrinter printer,
+                            int maxTimeoutForRead, int timeToWaitForMoreData,
+                            SGDHelperCallback callback) throws PrinterWrapperException {
+        if (callback != null) {
+            callback.onMessage("Initialising printer connection.");
+        }
+        Connection connection = connectToPrinter(printer, callback);
+        if (connection == null) {
+            throw new PrinterWrapperException(new Exception("Could not connect to printer."));
+        }
+        if (callback != null) {
+            callback.onMessage("Printer connection succeeded.");
+        }
+        int retryCount = 0;
+        String doSettingResponse = "";
+        while (true) {
+            if (doSettingResponse.length() != 0) {
+                if (callback != null) {
+                    callback.onMessage("DO command succeeded.");
+                }
+                break;
+            }
+            int retryCount2 = retryCount + 1;
+            if (retryCount >= 10) {
+                if (callback != null) {
+                    callback.onMessage("Error, could not execute DO command: " + setting + " with value " + value);
+                }
+                break;
+            }
+            if (callback != null) {
+                callback.onMessage("Executing DO command: " + setting + " with value " + value + " tryCount:" + retryCount);
+            }
+            if (retryCount > 0) {
+                if (callback != null) {
+                    callback.onMessage("Sleeping 300ms between method calls.");
+                }
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                doSettingResponse = SGD.DO(setting, value, connection, maxTimeoutForRead, timeToWaitForMoreData);
+                if(setting.equalsIgnoreCase("device.reset") && doSettingResponse.length() == 0)
+                {
+                    if (callback != null) {
+                        callback.onMessage("DO command succeeded.");
+                    }
+                    break;
+                }
+                if (doSettingResponse.length() > 0) {
+                    if (callback != null) {
+                        callback.onMessage("DO command returned: " + doSettingResponse);
+                    }
+                } else {
+                    if (callback != null) {
+                        callback.onMessage("DO command returned an empty string, trying again.");
+                    }
+                }
+            } catch (ConnectionException e) {
+                e.printStackTrace();
+                connection = connectToPrinter(printer, callback);
+                if (retryCount2 >= 10) {
+                    throw new PrinterWrapperException(new Exception("SGDHelper.DO::Retry count:" + retryCount2 + "\nConnection Exception :", e.getCause()));
+                }
+            }
+            Log.d(TAG, "DO setting: " + setting + " with value:" + value + " response: " + doSettingResponse + ", retryCount: " + retryCount2);
+            retryCount = retryCount2;
+        }
+        if (connection != null && connection.isConnected()) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (ConnectionException e) {
+                throw new PrinterWrapperException(e);
+            }
+        }
+        return doSettingResponse;
+    }
+
+    public static Map<String, String> MULTI_DO(String propertyNamesCommaSeparated, String propertyValuesCommaSeparated, DiscoveredPrinter discoveredPrinter,
+                                               int maxTimeoutForRead, int timeToWaitForMoreData,
+                                               SGDHelperCallback callback) throws PrinterWrapperException {
+        Map<String, String> propertiesNamesAndValues = getHashMapFromCommaSeparatedValues(propertyNamesCommaSeparated, propertyValuesCommaSeparated, mUseBase64Encoding);
+        return MULTI_DO(propertiesNamesAndValues, discoveredPrinter, maxTimeoutForRead, timeToWaitForMoreData, callback);
+    }
+
+    public static Map<String, String> MULTI_DO(Map<String, String> propertyNamesAndValues, DiscoveredPrinter discoveredPrinter,
+                                               int maxTimeoutForRead, int timeToWaitForMoreData,
+                                               SGDHelperCallback callback) throws PrinterWrapperException {
+        if (callback != null) {
+            callback.onMessage("Initialising printer connection.");
+        }
+        Connection connection = connectToPrinter(discoveredPrinter, callback);
+        if (connection == null) {
+            throw new PrinterWrapperException(new Exception("Could not connect to printer."));
+        }
+        if (callback != null) {
+            callback.onMessage("Printer connection succeeded.");
+        }
+        int retryCount = 0;
+        Set<String> keySet = propertyNamesAndValues.keySet();
+        Map<String, String> returnValues = new HashMap<>();
+        String writeValue = "";
+        for (String propertyName : keySet) {
+            if (callback != null) {
+                callback.onMessage("Setting up things for DO command: " + propertyName);
+            }
+            String returnValue = "";
+            while (true) {
+                if (returnValue.length() != 0) {
+                    if (callback != null) {
+                        callback.onMessage("DO command: " + propertyName + " succeeded.");
+                    }
+                    break;
+                }
+                int retryCount2 = retryCount + 1;
+                if (retryCount >= 10) {
+                    if (callback != null) {
+                        callback.onMessage("Error, could not execute the DO command: " + propertyName);
+                    }
+                    break;
+                }
+                if (callback != null) {
+                    callback.onMessage("Executing DO command: " + propertyName + " tryCount:" + retryCount);
+                }
+                if (retryCount > 0) {
+                    if (callback != null) {
+                        callback.onMessage("Waiting 300ms between method calls.");
+                    }
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    writeValue = propertyNamesAndValues.get(propertyName);
+                    if (callback != null) {
+                        callback.onMessage("Executing DO command: " + propertyName + " with value:" + writeValue);
+                    }
+                    returnValue = SGD.DO(propertyName, writeValue, connection, maxTimeoutForRead, timeToWaitForMoreData);
                     if (returnValue.length() > 0) {
                         if (callback != null) {
                             callback.onMessage("DO command return value: " + returnValue);
