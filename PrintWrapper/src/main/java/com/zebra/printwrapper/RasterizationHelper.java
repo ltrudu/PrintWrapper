@@ -102,7 +102,7 @@ public class RasterizationHelper {
     }
 
 
-    public static String getZPLFromPDFFile(String filePath, int pageNumber, int dpi, int nbCopies, boolean variableLengthEnabled, int vlTopMargin ) {
+    public static String getZPLFromPDFFile(String filePath, int pageNumber, int dpi, int nbCopies) {
         PdfRenderer renderer = null;
         try {
             renderer = new PdfRenderer(ParcelFileDescriptor.open(new File(filePath), ParcelFileDescriptor.MODE_READ_ONLY));
@@ -149,30 +149,30 @@ public class RasterizationHelper {
             page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
         }
 
-        String zplString = getZPLFromBitmap(bitmap, iWidth, iHeight, nbCopies, variableLengthEnabled, vlTopMargin);
+        String zplString = getZPLFromBitmap(bitmap, iWidth, iHeight, nbCopies);
         bitmap.recycle();
         return zplString;
     }
 
     public static String getZPLFromBitmap(Bitmap bitmap)
     {
-        return getZPLFromBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), 1, false, 0);
+        return getZPLFromBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), 1);
     }
     public static String getZPLVariableLengthFromBitmap(Bitmap bitmap, int vlTopMargin)
     {
-        return getZPLFromBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), 1, true, vlTopMargin);
+        return getZPLFromBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), 1);
     }
 
     public static String getZPLFromBitmap(Bitmap bitmap, int nbCopies)
     {
-        return getZPLFromBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), nbCopies, false, 0);
+        return getZPLFromBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), nbCopies);
     }
     public static String getZPLFromBitmap(Bitmap bitmap, int iWidth, int iHeight)
     {
-        return getZPLFromBitmap(bitmap,  iWidth, iHeight, 1, false, 0);
+        return getZPLFromBitmap(bitmap,  iWidth, iHeight, 1);
     }
 
-    public static String getZPLFromBitmap(Bitmap bitmap, int iWidth, int iHeight, int nbCopies, boolean variableLengthEnabled, int vlTopMargin)
+    public static String getZPLFromBitmap(Bitmap bitmap, int iWidth, int iHeight, int nbCopies)
     {
         StringBuilder printData = new StringBuilder();
         // By default create ZPL Data
@@ -180,12 +180,6 @@ public class RasterizationHelper {
         String ZPLBitmap = RasterizationHelper.createBitmapZPL(bitmap);
         Log.i(TAG, "Creating ZPL");
         printData.append("^XA");
-        if(variableLengthEnabled == true)
-        {
-            printData.append("^MNN");
-            printData.append("^LL"+ (iHeight + vlTopMargin));
-            printData.append("^LH0," + vlTopMargin);
-        }
         printData.append("^PW"+(iWidth*8));
         printData.append("^FO,0,0^GFA," + iWidth*iHeight + "," + iWidth*iHeight + "," + iWidth + ",");
         printData.append(ZPLBitmap);
@@ -199,7 +193,7 @@ public class RasterizationHelper {
         return printData.toString();
     }
 
-    public static String getZPLFromBitmapSoftware(Bitmap bitmap, int iWidth, int iHeight, int nbCopies, boolean variableLengthEnabled, int vlTopMargin)
+    public static String getZPLFromBitmapSoftware(Bitmap bitmap, int iWidth, int iHeight, int nbCopies)
     {
         StringBuilder printData = new StringBuilder();
         // By default create ZPL Data
@@ -207,12 +201,7 @@ public class RasterizationHelper {
         String ZPLBitmap = BitmapZPLConverter.createBitmapZPL(bitmap);
         Log.i(TAG, "Creating ZPL");
         printData.append("^XA");
-        if(variableLengthEnabled == true)
-        {
-            printData.append("^MNN");
-            printData.append("^LL"+ (iHeight + vlTopMargin));
-            printData.append("^LH0," + vlTopMargin);
-        }
+
         printData.append("^PW"+(iWidth*8));
         printData.append("^FO,0,0^GFA," + iWidth*iHeight + "," + iWidth*iHeight + "," + iWidth + ",");
         printData.append(ZPLBitmap);

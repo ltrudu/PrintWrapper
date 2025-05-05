@@ -66,8 +66,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.2.3'
     //implementation files('libs/jackson-databind-2.2.3.jar')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
-    implementation 'com.tom-roush:pdfbox-android:2.0.27.0'
-
 }
 
 afterEvaluate {
