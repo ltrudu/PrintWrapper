@@ -41,6 +41,7 @@ target_link_libraries( # Specifies the target library.
         -ljnigraphics
         -lz
         -llog
+        -Wl,-z,max-page-size=16384
 
         # Links the target library to the log library
         # included in the NDK.
